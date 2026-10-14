@@ -6,6 +6,7 @@
 3. Editor - I'll go with `VS Code` - already installed with some extentions.
   * Extension [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)  
 4. `Foundry DevPack` can also be used instead of VS Code, but since it installs other needed tools, then install that, too. 
+5. Optional: `Foundry Skill` - so you can ask LLM to make your AI app
 
 ### 1. git
 
@@ -122,6 +123,8 @@ azd -h
 ```
 #### [Foundry Toolkit for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-windows-ai-studio.windows-ai-studio) 
 ... was installed by FoundryDevPack.  
+It is a developer UI for deploying AI applications
+
 Features:  
 * 🔍 Discover and evaluate models from providers including Microsoft Foundry, Foundry Local, Anthropic, OpenAI, GitHub, Google, and NVIDIA NIM, or run models locally with ONNX and Ollama.
 * ⚡ Build, test, and deploy AI agents with Agent Builder for no-code prompt agents, or create code-based hosted agents with debugging, streaming visualization, and MCP tool integrations.
@@ -129,9 +132,19 @@ Features:
 
 It has its own left-menu in VS Code.  
 
+It is the UI for the `azd` cli
+
+#### azd cli
+... was installed by FoundryDevPack.  
+
+* Learn: [AZD-for-beginners](https://github.com/microsoft/AZD-for-beginners)
+
 #### [Azure Resources](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups) VS Code Extension
-... is a UI for your whole Azure collection of resources.  
+... is a UI DevOps/Infra for your whole Azure collection of resources.  
+
 This, too has its own left-menu in VS Code. I have placed it above Foundry.  
+
+It is the UI for the `az` cli
 
 #### GitHub Codespaces
 Foundry Toolkit for VS Code also had a link to [GitHub Codespaces](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces) VS Code Extension.  
@@ -139,4 +152,44 @@ Foundry Toolkit for VS Code also had a link to [GitHub Codespaces](https://marke
 It can be accessed from VS Code left-menu `Remote Explorer`, where remote locations - like SSH or WSL also resides.  
 I don't think I will be using it.  
 
+### 5. [Foundry Skill](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/use-microsoft-foundry-skill?tabs=vscode)
+So you can ask LLM to make your AI app.
+
+```bash
+# you nedd node 18 or later for npx to start MCP servers in compatible hosts
+node -v                       
+# v24.21.0
+
+az login
+# Subscription: xxx
+
+azd auth login
+# Logged in to Azure as xxx
+
+npx skills add https://github.com/microsoft/azure-skills --skill microsoft-foundry
+# Need to install the following packages:
+# skills@1.7.2
+# Source: https://github.com/microsoft/azure-skills.git
+# ◇  Repository cloned
+# ◇  Found 43 skills
+# ●  Selected 1 skill: microsoft-foundry
+# ◇  79 agents
+# ◆  Which agents do you want to install to?
+# │  ── Universal (.agents/skills) ── always included ────────────
+# ◇  Which agents do you want to install to?
+# │  Amp, Cline, Codex, Cursor, Droid, Gemini CLI, GitHub Copilot, Kilo Code, Kimi Code CLI, OpenCode, Pi, Warp, Zed
+# ◇  Installation scope
+# │  Project
+# ◇  Installation Summary ──────────────────────────────────────────────────────────────╮
+# │  ~\projs-git\projs-ai\ai-agents-playground-csharp\.agents\skills\microsoft-foundry  │
+# │    copy → Amp, Cline, Codex, Cursor, Droid +8 more                                  │
+# ├─────────────────────────────────────────────────────────────────────────────────────╯
+# ◇  Install the find-skills skill? It helps your agent discover and suggest skills.
+# ◇  Source: https://github.com/vercel-labs/skills.git
+# ◇  Installation Summary ──────────────────────────────╮
+# │  ~\.agents\skills\find-skills                       │
+# │    copy → Amp, Cline, Codex, Cursor, Droid +8 more  │
+# ├─────────────────────────────────────────────────────╯
+# └  Done!  Review skills before use; they run with full agent permissions.
+```
 ---
