@@ -1,7 +1,7 @@
 ## Trying out session [BRK241: From prototype to production: build and run agents at scale](https://build.microsoft.com/en-US/sessions/BRK241?source=sessions)
   * [Slides](https://medius.microsoft.com/video/asset/PPT/af92c987-5029-4a5f-8a59-4a3931941ce5)
 
-### PreReqquisites
+### PreRequisites
 * 010 [VS Code having Azure and Foundry Toolkit extension](010-setup.md)
   * Logged into
     * Github (for Copilot)
@@ -10,6 +10,9 @@
   * Installed [`Foundry Skills`](https://www.skills.sh/microsoft/azure-skills/microsoft-foundry)
 * 011 [setup a project in Foundry](011-no-deploy-quickstart.md)
   * Mine is called `soren-9590`
+
+### What is Foundry?
+* [Intro](https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry)
 
 ### Try it out
 #### Create Agent
@@ -113,4 +116,14 @@ We ended up publishing the agent to Teams
 ## Other agent sessions
 [![Other agent sessions](./img/012-other-agent-sessions.png)](https://build.microsoft.com/en-US/sessions?filter=topic%2FlogicalValue%3EAgents+%26+apps)
 
+## [LinkedIn Post](https://www.linkedin.com/feed/update/urn:li:share:7516432112141627393/)
+
 ---
+## Next up
+* [Quickstart: Get started with Microsoft Foundry SDK](https://learn.microsoft.com/en-us/azure/foundry/quickstarts/get-started-code?tabs=rest)
+* [Quickstart: Deploy your first hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-hosted-agent?pivots=csharp)
+* [Quickstart: Get started with Microsoft Foundry SDK](https://learn.microsoft.com/en-us/azure/foundry/quickstarts/get-started-code?tabs=csharp)
+* [Building a Hosted Agent with GitHub Copilot and Microsoft Foundry](https://code.visualstudio.com/learn/foundry-toolkit-extension/4-building-hosted-agent)
+* ChatGpt. Where? [Microsoft AI Agent Quickstart](chats/microsoft-ai-agent-deployment-chat.md)
+  * [Quickstart: Deploy your own code as a hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-deploy-own-code)
+
