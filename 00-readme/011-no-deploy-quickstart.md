@@ -20,12 +20,8 @@ or [try for free](https://azure.microsoft.com/en-us/pricing/purchase-options/azu
     * It looks like `save as agent` deployed the model and an agent.
     * .. meaning we should have satyed in the sandbox just to try the chat.
 
-#### Chat with the model via `azd`
-
-
-
 #### Chat with the model via REST
-PS1:
+[PS1](../10-projs/011-instant-model-rest/):
 ```ps1
 # Sign in using the CLI az login command to authenticate before running the next command.
 az login
@@ -35,7 +31,7 @@ $AZURE_AI_AUTH_TOKEN = az account get-access-token --scope https://ai.azure.com/
 
 # Ask LLM
 $JSON_REQUEST = '{"model": "gpt-5-mini","input": "What is the size of France in square miles?"}'
-curl.exe -X POST soren-9590-resource.services.ai.azure.com/api/projects/soren-9590/openai/v1/responses -H "Content-Type: application/json" -H "Authorization: Bearer $AZURE_AI_AUTH_TOKEN" -d $JSON_REQUEST
+curl.exe -X POST https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590/openai/v1/responses -H "Content-Type: application/json" -H "Authorization: Bearer $AZURE_AI_AUTH_TOKEN" -d $JSON_REQUEST
 # {
 #   "output": [
 #     {
@@ -60,7 +56,64 @@ curl.exe -X POST soren-9590-resource.services.ai.azure.com/api/projects/soren-95
 # }
 ``` 
 
+#### Chat with the model via C#
 
+```ps1
+# create console project
+dotnet new console -n 011-instant-model-cs
+cd 011-instant-model-cs
+dotnet add package Azure.Identity
+dotnet add package Azure.AI.Projects
+dotnet add package Azure.AI.Extensions.OpenAI
+dotnet add package OpenAI
+```
+
+Paste code into Program.cs
+```cs
+using Azure.Identity;
+using Azure.AI.Projects;
+using Azure.AI.Extensions.OpenAI;
+using OpenAI.Responses;
+
+#pragma warning disable OPENAI001
+
+// Format: "https://resource_name.services.ai.azure.com/api/projects/project_name"
+var foundryProjectEndpoint = "https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590";
+
+// Create project client to call Foundry API
+AIProjectClient projectClient = new(
+    endpoint: new Uri(foundryProjectEndpoint),
+    tokenProvider: new DefaultAzureCredential());
+
+// Run a responses API call
+ProjectResponsesClient responseClient = projectClient.ProjectOpenAIClient.GetProjectResponsesClientForModel(
+    "gpt-5-mini"); // supports all Foundry direct models
+ResponseResult response = await responseClient.CreateResponseAsync(
+    "What is the size of Norway in square miles?");
+string outputText = response.GetOutputText();
+if (string.IsNullOrWhiteSpace(outputText))
+{
+    throw new InvalidOperationException("Response output text was empty.");
+}
+
+Console.WriteLine(outputText);
+```
+
+```ps1
+dotnet build
+az login
+dotnet run
+# This will throw:
+# Unhandled exception. System.MissingMethodException: Method not found: 
+
+# to fix: Downgrade from v2.14.0
+dotnet add package OpenAI@2.10.0
+
+az login
+dotnet run
+# Norway's total area (including Svalbard and Jan Mayen) is about 148,729 square miles (385,207 km²).  
+# Mainland Norway alone is about 125,021 square miles (323,808 km²).
+```
 
 ## Next up
 * 012 [BRK241: From prototype to production: build and run agents at scale](012-foundry-from-prototype-to-production.md)

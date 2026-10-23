@@ -66,6 +66,12 @@ winget install Microsoft.FoundryDevPack
 az -v
 # azure-cli                         2.91.0
 
+azd version   
+# azd version 1.37.1
+
+azd --docs
+# docs in browser
+
 azd -h       
 # The Azure Developer CLI is an open-source tool that helps onboard and manage your project on Azure
 # Usage
