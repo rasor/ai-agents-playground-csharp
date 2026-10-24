@@ -133,18 +133,16 @@ cd 011-instant-model-ts
 
 # Create package.json
 npm init -y
+# Edit package.json for ECMAScript modules
+npm pkg set "type=module" "main=dist/index.js"
+# Add convenient npm build and start scripts
+npm pkg set "scripts.build=tsc" "scripts.start=node dist/index.js"
 # Install dependencies
 npm install @azure/identity
 npm install @azure/ai-projects
 
 # Create tsconfig.json
 npx tsc --init --rootDir src --outDir dist --target ES2022 --module es2022 --strict
-```
-
-Edit package.json to:
-```json
-  "main": "dist/index.js",
-  "type": "module",'
 ```
 
 Add code
@@ -184,6 +182,16 @@ az login
 # run from \dist
 node dist\index.js
 # Response output: Luxembourg covers about 2,586 square kilometers, which is approximately 999 square miles (≈998.6 sq mi).
+```
+
+For convenient start using npm:
+```ps1
+# Compile
+npm run build
+# login to azure
+az login
+# run
+npm start
 ```
 
 ## [LinkedIn Post](...)
