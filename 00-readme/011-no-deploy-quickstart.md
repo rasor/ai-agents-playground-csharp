@@ -146,7 +146,7 @@ npx tsc --init --rootDir src --outDir dist --target ES2022 --module es2022 --str
 ```
 
 Add code
-```typescript
+```ts
 // src\index.ts
 import { DefaultAzureCredential } from "@azure/identity";
 import { AIProjectClient } from "@azure/ai-projects";
@@ -192,6 +192,131 @@ npm run build
 az login
 # run
 npm start
+```
+#### Chat with the model via Phyton
+
+Do you need to update? Check [Phython versions](https://devguide.python.org/versions/)
+
+```ps1
+uv --version
+# Missing
+# Installing phyton version manager
+winget install --id astral-sh.uv -e
+# This package requires the following dependencies:
+#       Microsoft.VCRedist.2015+.x64
+# Path environment variable modified; restart your shell to use the new value.
+# Command line alias added: "uvx"
+# Command line alias added: "uv"
+# Command line alias added: "uvw"
+```
+
+Restart shell
+```ps1
+uv --version
+# uv 0.13.5 (46776a95d 2026-10-21 x86_64-pc-windows-msvc)
+uv python list
+# cpython-3.9.5-windows-x86_64-none
+# cpython-3.13.17-windows-x86_64-none                  <download available>
+uv python install 3.13.17
+# Installed Python 3.13.17 in 12.32s
+```
+```ps1
+cd 10-projs
+# Create .python-version. set python version in this project parent folder
+uv python pin 3.13.17
+# Create \.venv\pyvenv.cfg and more
+uv venv
+# Using CPython 3.13.17
+# Creating virtual environment at: .venv
+# Activate with: .venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
+
+python --version
+# Python 3.13.17
+
+# pip also needs installed
+python -m ensurepip --upgrade
+# Successfully installed pip-26.2.2
+python -m pip --version
+# pip 26.2.2
+```
+Initilize project
+```ps1
+# Create project folder
+mkdir 011-instant-model-py
+cd 011-instant-model-py
+
+# import dependencies
+python -m pip install azure.identity
+python -m pip install azure.ai.projects
+```
+
+Create `main.py` 
+```python
+# main.py
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+
+# Format: "https://resource_name.services.ai.azure.com/api/projects/project_name"
+FOUNDRY_PROJECT_ENDPOINT = "your_project_endpoint"
+
+# Create project and openai clients to call Foundry API
+project = AIProjectClient(
+    endpoint=FOUNDRY_PROJECT_ENDPOINT,
+    credential=DefaultAzureCredential(),
+)
+openai = project.get_openai_client()
+
+# Run a responses API call
+response = openai.responses.create(
+    model="gpt-5-mini",  # supports all Foundry direct models
+    input="What is the size of Finland in square miles?",
+)
+if not response.output_text or not response.output_text.strip():
+    raise RuntimeError("Response output text was empty.")
+
+print(f"Response output: {response.output_text}")
+```
+
+```ps1
+# check the project for syntax errors and generate bytecode files
+python -m compileall main.py
+
+az login
+# Compile and run
+python main.py
+```
+When finished, leave the virtual environment with:
+```ps1
+deactivate
+```
+
+#### List possible instant models
+[PS1](../10-projs/011-instant-model-rest/):
+```ps1
+$SUBSCRIPTION_ID = "<your-subscription-id>"
+$LOCATION = "westus3"
+$URL = "https://management.azure.com/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.CognitiveServices/locations/$LOCATION/models?api-version=2025-06-01"
+
+$responseJson = az rest --method get --url $URL --output json
+if ($LASTEXITCODE -ne 0) {
+    throw "az rest failed with exit code $LASTEXITCODE."
+}
+
+$response = $responseJson | ConvertFrom-Json
+$models = if ($null -ne $response.value) {
+    $response.value
+} elseif ($null -ne $response.models) {
+    $response.models
+} else {
+    $response
+}
+
+$models |
+    Where-Object { ([string]$_.model.capabilities.instant) -ieq "true" } |
+    ForEach-Object { $_.model.name } |
+    Where-Object { $_ } |
+    Sort-Object -Unique
 ```
 
 ## [LinkedIn Post](...)
