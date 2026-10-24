@@ -427,3 +427,14 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# -----------------------------
+
+# TypeScript/Node 
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*
+!.env.example

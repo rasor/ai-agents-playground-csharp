@@ -115,6 +115,79 @@ dotnet run
 # Mainland Norway alone is about 125,021 square miles (323,808 km²).
 ```
 
+#### Chat with the model via typescript
+
+```ps1
+node -v           
+# v24.21.0
+
+cd 10-projs
+# Create package.json with tsc in project parent folder
+npm install --save-dev typescript
+npx tsc --version
+# Version 7.0.2 
+
+# Create project folder
+mkdir 011-instant-model-ts
+cd 011-instant-model-ts
+
+# Create package.json
+npm init -y
+# Install dependencies
+npm install @azure/identity
+npm install @azure/ai-projects
+
+# Create tsconfig.json
+npx tsc --init --rootDir src --outDir dist --target ES2022 --module es2022 --strict
+```
+
+Edit package.json to:
+```json
+  "main": "dist/index.js",
+  "type": "module",'
+```
+
+Add code
+```typescript
+// src\index.ts
+import { DefaultAzureCredential } from "@azure/identity";
+import { AIProjectClient } from "@azure/ai-projects";
+
+// Format: "https://resource_name.services.ai.azure.com/api/projects/project_name"
+const FOUNDRY_PROJECT_ENDPOINT = "https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590";
+
+async function main(): Promise<void> {
+    // Create project and openai clients to call Foundry API
+    const project = new AIProjectClient(FOUNDRY_PROJECT_ENDPOINT, new DefaultAzureCredential());
+    const openai = project.getOpenAIClient();
+
+    // Run a responses API call
+    const response = await openai.responses.create({
+        model: "gpt-5-mini",
+        input: "What is the size of Luxembourg in square miles?",
+    });
+    console.log(`Response output: ${response.output_text}`);
+}
+
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});
+```
+
+```ps1
+# Compile into `\dist`
+npx tsc
+
+# login to azure
+az login
+# run from \dist
+node dist\index.js
+# Response output: Luxembourg covers about 2,586 square kilometers, which is approximately 999 square miles (≈998.6 sq mi).
+```
+
+## [LinkedIn Post](...)
+
 ## Next up
 * 012 [BRK241: From prototype to production: build and run agents at scale](012-foundry-from-prototype-to-production.md)
 
