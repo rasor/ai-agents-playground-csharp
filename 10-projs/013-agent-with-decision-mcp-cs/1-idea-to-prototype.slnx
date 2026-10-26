@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Evaluate/Evaluate.csproj" />
+  <Project Path="ModernWorkplaceAssistant/ModernWorkplaceAssistant.csproj" />
+</Solution>

@@ -13,7 +13,7 @@
 ```bash
 # verify git installed
 git --version
-# git version 2.24.1.windows.2
+# git version 2.56.0.windows.3
 ```
 
 ### 2. C# and .net

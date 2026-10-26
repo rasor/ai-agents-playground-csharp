@@ -319,7 +319,7 @@ $models |
     Sort-Object -Unique
 ```
 
-## [LinkedIn Post](...)
+## [LinkedIn Post](https://www.linkedin.com/feed/update/urn:li:activity:7519806014993584128/)
 
 ## Next up
 * 012 [BRK241: From prototype to production: build and run agents at scale](012-foundry-from-prototype-to-production.md)
