@@ -118,5 +118,6 @@ We ended up publishing the agent to Teams
 
 ## [LinkedIn Post](https://www.linkedin.com/feed/update/urn:li:share:7516432112141627393/)
 
+---
 ## Next up
 * 013 [Tutorial: Idea to prototype](013-agent-with-decision-mcp.md)

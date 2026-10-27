@@ -8,6 +8,7 @@
   * Here we see Foundry Toolbox (via azd) create and app and how it is monitored
 * 013 [Tutorial: Idea to prototype](013-agent-with-decision-mcp.md)
   * Deploy Agent that make decision based on MCP response.  
+* 014 [Getting hole though to your MCP server](./014-mcp-mock.md)
 
 # HowTo
 * [C# AI Agent Frameworks — Beginner to Expert](chats/csharp-ai-agent-frameworks.md)

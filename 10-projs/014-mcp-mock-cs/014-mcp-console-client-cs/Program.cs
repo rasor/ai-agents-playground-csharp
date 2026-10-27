@@ -1,8 +1,14 @@
 using System.Globalization;
+using Microsoft.Extensions.Configuration;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 
-const string endpoint = "https://localhost:60943/mcp";
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: false)
+    .Build();
+    
+var endpoint = configuration["Mcp:Endpoint"]
+    ?? throw new InvalidOperationException("The MCP endpoint is not configured in appsettings.json.");
 
 try
 {

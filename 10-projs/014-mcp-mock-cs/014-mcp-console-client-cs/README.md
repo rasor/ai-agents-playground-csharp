@@ -16,10 +16,10 @@ Trust the local ASP.NET Core HTTPS development certificate if it is not already 
 dotnet dev-certs https --trust
 ```
 
-Then run the client:
+Then run the client. Configure the MCP server URL in `appsettings.json`:
 
 ```powershell
 dotnet run --project .\014-mcp-console-client-cs.csproj
 ```
 
-The client connects to `https://localhost:60943/mcp`, prints available tool names and descriptions, invokes `add`, displays its response, and prints `done!` on success. Connection and tool-call errors are written to standard error and result in a non-zero exit code.
+The client reads `Mcp:Endpoint` from `appsettings.json`, prints available tool names and descriptions, invokes `add`, displays its response, and prints `done!` on success. Connection and tool-call errors are written to standard error and result in a non-zero exit code.
