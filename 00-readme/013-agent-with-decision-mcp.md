@@ -274,7 +274,7 @@ This agent was not deleted by code, so you should manually do it.
 * [Set up a Microsoft Foundry project in Visual Studio Code](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/set-up-foundry-project-visual-studio-code)
 * [Microsoft Foundry Toolkit for Visual Studio Code overview](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/get-started-projects-visual-studio-code)
 
-## [LinkedIn Post](...)
+## [LinkedIn Post](https://www.linkedin.com/feed/update/urn:li:activity:7520421435253637121/)
 
 ---
 ## Next up

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="014-mcp-add-cs/McpAddServer.csproj" />
+  <Project Path="014-mcp-console-client-cs/McpConsoleClient.csproj" />
+</Solution>
