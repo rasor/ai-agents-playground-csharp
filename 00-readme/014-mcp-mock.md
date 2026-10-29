@@ -14,7 +14,7 @@ Here is how it looked like, when running:
 * Github Samples: [modelcontextprotocol/csharp-sdk](https://github.com/modelcontextprotocol/csharp-sdk)
   * api.github [same](https://api.github.com/repos/modelcontextprotocol/csharp-sdk/contents/samples)
 
-## [LinkedIn Post](...)
+## [LinkedIn Post](https://www.linkedin.com/feed/update/urn:li:activity:7520903934400532480/)
 
 ---
 ## Next up
@@ -23,4 +23,3 @@ Here is how it looked like, when running:
 * [Building a Hosted Agent with GitHub Copilot and Microsoft Foundry](https://code.visualstudio.com/learn/foundry-toolkit-extension/4-building-hosted-agent)
 * ChatGpt. Where? [Microsoft AI Agent Quickstart](chats/microsoft-ai-agent-deployment-chat.md)
   * [Quickstart: Deploy your own code as a hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-deploy-own-code)
-  
