@@ -11,10 +11,10 @@ services:
   ai-project:
     host: azure.ai.project
     deployments:
-      - name: gpt-5.4-mini
+      - name: gpt-5-mini
         model:
           format: OpenAI
-          name: gpt-5.4-mini
+          name: gpt-5-mini
           version: '2026-03-17'
         sku:
           name: GlobalStandard

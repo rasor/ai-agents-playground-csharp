@@ -1,6 +1,15 @@
-## Using [Instant model](https://learn.microsoft.com/en-us/azure/foundry/concepts/instant-models?tabs=rest%2Crest-api)
+## 011 Using [Instant model](https://learn.microsoft.com/en-us/azure/foundry/concepts/instant-models?tabs=rest%2Crest-api)
 
-The first test will be to create a project in `West US 3` to use instant access models. Instant models have no deployment, so use the model name `gpt-5-mini`.  
+The first test will be to create a project in `West US 3` to use `instant access models`. Instant models have no deployment, so use the model name `gpt-5-mini`.  
+
+We'll try to
+* [Login to cloud](#login-to-cloud) then
+  * [Chat with the model via web](#chat-with-the-model-via-web)
+  * [Chat with the model via REST](#chat-with-the-model-via-rest)
+  * [Chat with the model via C#](#chat-with-the-model-via-c)
+  * [Chat with the model via TypeScript](#chat-with-the-model-via-typescript)
+  * [Chat with the model via Python](#chat-with-the-model-via-python)
+  * [List possible instant models](#list-possible-instant-models)
 
 ### Login to cloud
 * First login to [Azure Portal](https://portal.azure.com/) from web, so you are sure you can get in.
@@ -10,7 +19,7 @@ or [try for free](https://azure.microsoft.com/en-us/pricing/purchase-options/azu
   * but they are not in `West US 3`, which is required for trying out [instant model](https://learn.microsoft.com/en-us/azure/foundry/quickstarts/get-started-code?tabs=csharp)
   * so instead create a new project in [Foundry](https://ai.azure.com/), where you in advanced select Location `West US 3`
 
-#### Chat with model via web
+#### Chat with the model via web
 * Second requirement is that we use model `gpt-5-mini` wherever the samples ask for a deployment name.
 * In Fountry - Models
   * Instead of Deploy press Open Playground
@@ -18,7 +27,7 @@ or [try for free](https://azure.microsoft.com/en-us/pricing/purchase-options/azu
   * --> now agent opens. Here I asked: "Is this an instant model?"
     * Warning: deployment_disabledInstant inference quota is still being initialized for this subscription. Please try again in a few minutes.
     * It looks like `save as agent` deployed the model and an agent.
-    * .. meaning we should have satyed in the sandbox just to try the chat.
+    * .. meaning we should have stayed in the sandbox just to try the chat.
 
 #### Chat with the model via REST
 [PS1](../10-projs/011-instant-model-rest/):
@@ -115,7 +124,7 @@ dotnet run
 # Mainland Norway alone is about 125,021 square miles (323,808 km²).
 ```
 
-#### Chat with the model via typescript
+#### Chat with the model via TypeScript
 
 ```ps1
 node -v           
@@ -193,41 +202,37 @@ az login
 # run
 npm start
 ```
-#### Chat with the model via Phyton
 
-Do you need to update? Check [Phython versions](https://devguide.python.org/versions/)
+#### Chat with the model via Python
+T
+Do you need to update? Check [Python versions](https://devguide.python.org/versions/)
 
-```ps1
-uv --version
-# Missing
-# Installing phyton version manager
-winget install --id astral-sh.uv -e
-# This package requires the following dependencies:
-#       Microsoft.VCRedist.2015+.x64
-# Path environment variable modified; restart your shell to use the new value.
-# Command line alias added: "uvx"
-# Command line alias added: "uv"
-# Command line alias added: "uvw"
-```
-
-Restart shell
+Python version manager was installed in [010](010-setup.md#6-python-version-manageruv):
+PS1:
 ```ps1
 uv --version
 # uv 0.13.5 (46776a95d 2026-10-21 x86_64-pc-windows-msvc)
+
+# which python is installed and which are available?
 uv python list
 # cpython-3.9.5-windows-x86_64-none
 # cpython-3.13.17-windows-x86_64-none                  <download available>
+
+# install a newer python
 uv python install 3.13.17
 # Installed Python 3.13.17 in 12.32s
 ```
+PS1:
 ```ps1
 cd 10-projs
 # Create .python-version. set python version in this project parent folder
 uv python pin 3.13.17
+
 # Create \.venv\pyvenv.cfg and more
 uv venv
 # Using CPython 3.13.17
 # Creating virtual environment at: .venv
+
 # Activate with: .venv\Scripts\activate
 .\.venv\Scripts\Activate.ps1
 
@@ -241,6 +246,7 @@ python -m pip --version
 # pip 26.2.2
 ```
 Initilize project
+PS1:
 ```ps1
 # Create project folder
 mkdir 011-instant-model-py

@@ -18,8 +18,4 @@ Here is how it looked like, when running:
 
 ---
 ## Next up
-* [Quickstart: Deploy your first hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-hosted-agent?pivots=csharp)
-* [Quickstart: Chat with an agent in code](https://learn.microsoft.com/en-us/azure/foundry/quickstarts/get-started-code?tabs=csharp)
-* [Building a Hosted Agent with GitHub Copilot and Microsoft Foundry](https://code.visualstudio.com/learn/foundry-toolkit-extension/4-building-hosted-agent)
-* ChatGpt. Where? [Microsoft AI Agent Quickstart](chats/microsoft-ai-agent-deployment-chat.md)
-  * [Quickstart: Deploy your own code as a hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-deploy-own-code)
+* 015 [Chat with a prompt-agent](./015-chat-with-agent.md)

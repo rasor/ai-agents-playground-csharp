@@ -1,4 +1,4 @@
-## Setup Foundry - [Prepare your development environment](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/install-cli-sdk?tabs=windows%2Ccsharp%2Cazd-ai)
+## 010 Setup Foundry - [Prepare your development environment](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/install-cli-sdk?tabs=windows%2Ccsharp%2Cazd-ai)
 
 ### What we need
 1. git - I use [`Git for windows`](https://git-scm.com/install/) - already installed.  
@@ -7,6 +7,8 @@
   * Extension [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)  
 4. `Foundry DevPack` can also be used instead of VS Code, but since it installs other needed tools, then install that, too. 
 5. Optional: `Foundry Skill` - so you can ask LLM to make your AI app
+6. Optional: Python version manager (uv)
+7. Optional: VSCode Extension [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python), so you can debug Python.
 
 ### 1. git
 
@@ -162,7 +164,7 @@ I don't think I will be using it.
 So you can ask LLM to make your AI app.
 
 ```bash
-# you nedd node 18 or later for npx to start MCP servers in compatible hosts
+# you need node 18 or later for npx to start MCP servers in compatible hosts
 node -v                       
 # v24.21.0
 
@@ -198,4 +200,37 @@ npx skills add https://github.com/microsoft/azure-skills --skill microsoft-found
 # ├─────────────────────────────────────────────────────╯
 # └  Done!  Review skills before use; they run with full agent permissions.
 ```
+### 6. Python version manager:[UV](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer)
+
+```ps1
+uv --version
+# Missing
+# Installing phyton version manager
+winget install --id astral-sh.uv -e
+# This package requires the following dependencies:
+#       Microsoft.VCRedist.2015+.x64
+# Path environment variable modified; restart your shell to use the new value.
+# Command line alias added: "uvx"
+# Command line alias added: "uv"
+# Command line alias added: "uvw"
+```
+
+Restart shell
+```ps1
+uv --version
+# uv 0.13.5 (46776a95d 2026-10-21 x86_64-pc-windows-msvc)
+
+# which python is installed and which are available?
+uv python list
+# cpython-3.9.5-windows-x86_64-none
+# cpython-3.13.17-windows-x86_64-none                  <download available>
+
+# install a newer python
+uv python install 3.13.17
+# Installed Python 3.13.17 in 12.32s
+```
+
+### 7. VSCode Extension [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+So you can debug Python.
+
 ---

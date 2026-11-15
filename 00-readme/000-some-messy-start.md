@@ -1,14 +1,21 @@
-# Setup
-* 010 [Setup Azure Foundry](./010-setup.md)
+
+
+# 000 Setup
+* 010 [Setup Azure Foundry development environment](./010-setup.md)
 
 # [Try](https://learn.microsoft.com/en-us/azure/foundry/quickstarts/quickstarts)
-* 011 [Quickstart Fountry via web](011-no-deploy-quickstart.md)
+* 011 [Quichstart: Access instant models in Fountry via web, REST, TypeScript, C# and TypeScript](011-no-deploy-quickstart.md)
   * Here we see Foundry in Azure Web UI (read Infra resources UI) and in Foundry Web UI (read App resources UI) 
 * 012 [BRK241: From prototype to production: build and run agents at scale](012-foundry-from-prototype-to-production.md)
   * Here we see Foundry Toolbox (via azd) create and app and how it is monitored
 * 013 [Tutorial: Idea to prototype](013-agent-with-decision-mcp.md)
   * Deploy Agent that make decision based on MCP response.  
 * 014 [Getting hole though to your MCP server](./014-mcp-mock.md)
+  * Create a mock MCP server and a client to test it.
+* 015 [Chat with a prompt-agent](./015-chat-with-agent.md)
+  * Zooming in on 013 and look at details.
+* 016 [Quickstart: Build a toolbox and use it with a hosted agent](./016-agent-uses-toolbox.md)
+  * Deploy and Agent that uses a group of MCP servers via a so-called Toolbox.  
 
 # HowTo
 * [C# AI Agent Frameworks — Beginner to Expert](chats/csharp-ai-agent-frameworks.md)
