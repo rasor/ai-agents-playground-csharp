@@ -96,6 +96,67 @@ Now I can add to .env as used from azure.yaml:
 AZURE_LANGUAGE_MCP_ENDPOINT="https://soren-9590-resource.cognitiveservices.azure.com/language/mcp?api-version=2025-11-15-preview"
 ```
 
+The Foundry project managed identity also needs the **Cognitive Services Language Owner** role on the Azure Language resource. Assign the role at the Language resource scope (not the Foundry project scope). This is an Azure RBAC assignment, so use the Azure portal or `az`; `azd` does not provide a role-assignment command for this.
+
+##### Assign the role in the Azure portal
+
+1. Open the Language resource in the [Azure portal](https://portal.azure.com/). For this endpoint, the resource name is `soren-9590-resource`.
+2. Select **Access control (IAM)** > **Add** > **Add role assignment**.
+3. Select **Cognitive Services Language Owner**.
+4. On **Members**, choose **Managed identity**, select the subscription and the Foundry project managed identity, then continue.
+5. Select **Review + assign**.
+
+The Foundry portal is where the remote MCP connection is configured; assign this Azure resource role through Azure RBAC. The account performing the assignment needs permission to create role assignments, such as **Role Based Access Control Administrator**, **User Access Administrator**, or **Owner** at the target scope.
+
+![Assign role](./img/016-Foundry-AZURE_LANGUAGE_MCP_ENDPOINT-3.png)  
+![Assign role](./img/016-Foundry-AZURE_LANGUAGE_MCP_ENDPOINT-4.png)  
+![Assign role](./img/016-Foundry-AZURE_LANGUAGE_MCP_ENDPOINT-5.png)  
+![Assign role](./img/016-Foundry-AZURE_LANGUAGE_MCP_ENDPOINT-6.png)  
+
+##### Assign the role with Azure CLI (`az`)
+
+Run in PowerShell after `az login`. Replace the resource group and Foundry account/project names with yours. The Language resource name below matches the endpoint above; use its actual name if it is a separate resource.
+
+```powershell
+$resourceGroup = "<resource-group>"
+$foundryAccount = "<foundry-account-name>"
+$foundryProject = "<foundry-project-name>"
+$languageResource = "soren-9590-resource"
+
+# The principal ID is the Foundry project's system-assigned managed identity.
+$principalId = az cognitiveservices account project show `
+  --name $foundryAccount `
+  --resource-group $resourceGroup `
+  --project-name $foundryProject `
+  --query identity.principalId -o tsv
+if (-not $principalId) { throw "No project managed identity principal ID was returned." }
+
+# Use the Language resource's resource ID as the narrowest assignment scope.
+$scope = az cognitiveservices account show `
+  --name $languageResource `
+  --resource-group $resourceGroup `
+  --query id -o tsv
+if (-not $scope) { throw "Could not resolve the Language resource ID." }
+
+az role assignment create `
+  --assignee-object-id $principalId `
+  --assignee-principal-type ServicePrincipal `
+  --role "Cognitive Services Language Owner" `
+  --scope $scope
+```
+
+Check the assignment after it propagates:
+
+```powershell
+az role assignment list `
+  --scope $scope `
+  --assignee $principalId `
+  --query "[?roleDefinitionName=='Cognitive Services Language Owner'].{Role:roleDefinitionName, Scope:scope}" `
+  --output table
+```
+
+If the role or managed identity doesn't appear in the portal picker, confirm that you selected **Managed identity** and the correct Foundry project. The project identity can also be inspected with `az cognitiveservices account project show`. Role changes can take a few minutes to propagate.
+
 ##### Foundry remote MCP
 
 I'll set 'Foundry' remote MCP up via Foundry Portal, so that credentials are stored in Foundry:  
@@ -259,10 +320,29 @@ azd ai agent endpoint show
 ```
 Wrong command - we checked if the agent was deployed. It is not deployed. We just want to run it locally atm.
 
-
+So - run the agent locally:
 ```bash
+cd src\agent-framework-agent-with-foundry-toolbox-responses
+az login
 azd ai agent run                           # Run locally on http://localhost:8088
 ```
+```log
+Detected python project. Start command: python main.py
+Synchronizing dependencies (uv.lock)...
+  ✓ Dependencies synchronized (uv.lock)
+Starting agent on http://localhost:8088 (Ctrl+C to stop)
+...
+[2026-11-16 13:25:57 +0100] [20488] [INFO] Running on http://0.0.0.0:8088 (CTRL + C to quit)
+Agent ready. In another terminal, try:
+
+Next:
+  azd ai agent invoke --local '<payload>'
+  send a sample request to the running agent
+
+  curl http://localhost:<port>/invocations/docs/openapi.json
+  tip: inspect the spec to learn the agent's exact payload
+```
+
 A local webpage for interacting with the local agent pupped up
 ![Foundry tools](./img/016-AgentLocalRun1.png)
 
@@ -272,16 +352,60 @@ It fetched two tools and failed on 3:
 
 So seemingly we have hole through to the toolbox, but are having some issues with permissions on some tools.  
 
+Well I added the instructions for adding role 'Cognitive Services Language Owner' Foundry ProjectManagedIdentity after I saw it failing here, so you can just [scroll up and see it there](#assign-the-role-in-the-azure-portal).
+
+
+
 ```bash
 # in another console:
+cd src\agent-framework-agent-with-foundry-toolbox-responses
+az login
 azd ai agent invoke --local "List the tools you can use." # Test the local agent
 # azd ai agent invoke --local "Find the latest release notes for the Azure CLI on the web."
 
 # azd deploy                                 # Deploy to Foundry
 # azd ai agent invoke "your message"         # Invoke the deployed agent
 ```
+```log
+Target:       localhost:8088 (local)
+Message:      "List the tools you can use."
+Session:      8c3c2dc8-4f90-4466-8914-83b762ad9c18
+Conversation: c912200a-1d50-4b06-b8a3-92577eeefad9
+
+WARNING: A new version of extension 'Foundry agents (Beta)' is available: 1.0.0-beta.19 -> 1.1.0
+  • To update: azd extension update azure.ai.agents
+  • To update all: azd extension update --all
+
+ERROR: agent failed (server_error): ('Failed to enter context manager.', McpError('tools/list failed for 1 tool source(s), succeeded for 4 tool source(s) {"errors":[{"name":"foundrymcpconn","type":"mcp","error":{"code":"HTTP_400","message":"Connection resolution failed for \'foundrymcpconn\'. HTTP status: BadRequest. Reason: Agent user impersonation is not supported with the default agent identity. Configure a provisioned agent identity by providing ApplicationName or both AgentBlueprintClientId and AgentInstanceClientId."}}]}'))
+Update available: 1.37.1 -> 1.37.3 (Release notes)
+To update, run `winget upgrade Microsoft.Azd`
+```
+Did CTRL + C to stop local agent. This asked me to update:
+```log
+WARNING: A new version of extension 'Foundry Agent Inspector (Beta)' is available: 1.0.0-beta.8 -> 1.0.0
+  • To update: azd extension update azure.ai.inspector
+  • To update all: azd extension update --all
+
+WARNING: A new version of extension 'Foundry agents (Beta)' is available: 1.0.0-beta.19 -> 1.1.0
+  • To update: azd extension update azure.ai.agents
+  • To update all: azd extension update --all
+
+Update available: 1.37.1 -> 1.37.3 (Release notes)
+To update, run `winget upgrade Microsoft.Azd`
+```
+
+```bash
+# azd ai agent invoke --local "Find the latest release notes for the Azure CLI on the web."
+
+# azd deploy                                 # Deploy to Foundry
+# azd ai agent invoke "your message"         # Invoke the deployed agent
+```
+
 ### References
 * [Role-based access control for Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry?tabs=owner%2Cfoundry)
+* [Role-based access control for Azure Language](https://learn.microsoft.com/en-us/azure/ai-services/language-service/concepts/role-based-access-control)
+* [Azure CLI: `az cognitiveservices account project`](https://learn.microsoft.com/en-us/cli/azure/cognitiveservices/account/project?view=azure-cli-latest)
+* [Azure CLI: `az role assignment`](https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest)
 * [Configure keyless authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-entra-id?tabs=python&pivots=ai-foundry-portal)
 * [MCP — Microsoft Entra (Agent Identity / Project Managed Identity)](https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/python/hosted-agents/SUPPORTED_TOOLBOX_SCENARIOS/tools/mcp-microsoft-entra.md)
 
