@@ -347,6 +347,7 @@ azd ai agent --help
 ## References
 * Toolbox
   * [Toolbox toos](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview#tool-search)
+  * [Enable tool search in a toolbox](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/tool-search?pivots=python)
 * Agents
   * [Configure environment variables for a hosted agent - Foundry variables](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-hosted-agent-env-variables#foundry-variables)
   * [azure.yaml reference for hosted agents](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/azure-yaml-reference)
@@ -359,6 +360,6 @@ azd ai agent --help
   * [Configure keyless authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-entra-id?tabs=python&pivots=ai-foundry-portal)
   * [MCP — Microsoft Entra (Agent Identity / Project Managed Identity)](https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/python/hosted-agents/SUPPORTED_TOOLBOX_SCENARIOS/tools/mcp-microsoft-entra.md)
 
-## [LinkedIn Post](...)
+## [LinkedIn Post](https://www.linkedin.com/feed/update/urn:li:activity:7529829556065689600/)
 
 ---
