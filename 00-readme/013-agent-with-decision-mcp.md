@@ -269,7 +269,7 @@ Question 2/2: Define the Maxwell's equation.
 
 This agent was not deleted by code, so you should manually do it.
 
-## Refs
+## References
 * [Agent Deployment Lifecycle](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/cli-agent-development#deployment-lifecycle)
 * [Set up a Microsoft Foundry project in Visual Studio Code](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/set-up-foundry-project-visual-studio-code)
 * [Microsoft Foundry Toolkit for Visual Studio Code overview](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/get-started-projects-visual-studio-code)

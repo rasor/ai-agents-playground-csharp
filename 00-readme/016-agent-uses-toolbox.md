@@ -1,7 +1,5 @@
 ## 016 [Quickstart: Build a toolbox and use it with a hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-toolbox-agent?pivots=vscode)
 
-... This is still WIP ...
-
 In this test We'll create a common interface to a group of MCP servers - also called a Toolbox.  
 Then we will deploy it to Foundry and access it from 
 1. Agent running locally in PC via  
@@ -54,10 +52,14 @@ python -m compileall main.py
 ```
 If no errors the agent code is great.
 
-What the agent need of connections strings is in `10-projs\016-hosted-agent-py\azure.yaml`
-![016-toolbox](./img/016-toolbox.drawio.svg).  
+The agent and toolbox needs **settings**.  
+Some identities needs **permissions**.
+You can get much of the picture from `10-projs\016-hosted-agent-py\azure.yaml`
+[![016-toolbox](./img/016-toolbox.drawio.svg)](../10-projs/016-hosted-agent-py/azure.yaml)  
+That `azure.yaml` is  also the `Infrastructure As Code` used for deploying the resources - the agent and the toolbox.
 
-You can read about some of the tools in the drawing [here](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview#supported-tools.).  
+You can read about some of the **supported tools** in Foundry - click on this drawing:  
+[![016-supported-tools.png](./img/016-supported-tools.png)](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview#supported-tools)
 
 |[env](../10-projs/016-hosted-agent-py/src/agent-framework-agent-with-foundry-toolbox-responses/)|GET|USE|
 |---|---|---|
@@ -66,8 +68,17 @@ You can read about some of the tools in the drawing [here](https://learn.microso
 Info: Foundry stores connections details in a **managed Azure Key Vault** if no Key Vault connection is created.  
 Users that prefer to manage their secrets themselves can bring their own Azure Key Vault via a connection. 
 
-##### GITHUB_MCP_PAT
-The `GITHUB_MCP_PAT` is a token used from VSCode - then handed over to the agent, who then uses it.  
+##### Tool: foundrymcpconn
+
+The tool is used for controlling resources in Foundry.  
+Here is a list of areas you can control with it.  
+You need to have permissions for the things you want to do in Foundry.  
+You could prompt: "List all agents in my Foundry project.", if you have `agent_get`-tool configured in your foundrymcpconn and if you have permission to read it.  
+[![016-Foundry-MCP-capabilities](./img/016-Foundry-MCP-capabilities.png)](https://learn.microsoft.com/en-us/azure/foundry/mcp/available-tools?view=foundry#agent-management)
+
+##### Tool: ghmcppat
+
+The env:`GITHUB_MCP_PAT` is a token used from VSCode - then handed over to the agent, who then uses it.  
 * In the table use link `fine-grained PAT` to create a PAT.  
 * Then click buttom [VSCode Install server](https://github.com/github/github-mcp-server#remote-github-mcp-server).  
 Just install it - don't grant it accees. 
@@ -85,7 +96,9 @@ I'll set 'GitHub' MCP up via Foundry Portal, so that credentials are stored in F
 ![GitHub MCP in Foundry](./img/016-Foundry-GITHUB_MCP_PAT.png)  
 ![Create GitHub MCP](./img/016-Foundry-GITHUB_MCP_PAT-2.png)
 
-##### AZURE_LANGUAGE_MCP_ENDPOINT
+##### Tool: langmcpconn
+
+env:AZURE_LANGUAGE_MCP_ENDPOINT
 
 I'll set 'Azure Language in Foundry' MCP up via Foundry Portal, so that credentials are stored in Foundry:  
 ![Azure Language MCP in Foundry](./img/016-Foundry-AZURE_LANGUAGE_MCP_ENDPOINT.png)  
@@ -183,10 +196,11 @@ az login
 azd auth login
 # set region same as where your Resource group
 azd env set AZURE_LOCATION westus3
-# upload template
+
+# create azure resources needed by the agent
 azd provision
 
-# if no errors deploy
+# if no errors deploy = package the agent, remote build and deploy
 # azd deploy --all
 
 # verify deploy of toolbox succeeded by seeing this env have been set
@@ -204,26 +218,51 @@ Add the tools missing
 
 This gave med an endpoint which I can add to my agent settings:
 ```ps1
-azd env set TOOLBOX_ENDPOINT https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590/toolboxes/agent-tools-016/mcp?api-version=v1
+azd env set TOOLBOX_ENDPOINT https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590/toolboxes/agent-tools-016/versions/3/mcp?api-version=v1
 ```
+
+Notice the `/versions/3/`. I edited the toolbox. This added new versions each with their own endpoint. 
+You can see the different ones by choosing in the version drop-down.  
+![ToolboxVersions](./img/016-Foundry-ToolboxVersions.png)
 
 #### 3. Run agent locally 
 
-PS1:
-```ps1
-cd src\agent-framework-agent-with-foundry-toolbox-responses
+```bash
+cd 10-projs\016-hosted-agent-py\src\agent-framework-agent-with-foundry-toolbox-responses
+
+# Suggestion: persist a workspace default with `azd ai project set <endpoint>`, or set FOUNDRY_PROJECT_ENDPOINT in the active azd environment, or export FOUNDRY_PROJECT_ENDPOINT in your shell
+azd env set FOUNDRY_PROJECT_ENDPOINT https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590
+azd env set AZURE_AI_MODEL_DEPLOYMENT_NAME gpt-5-mini
+
 az login
-# Compile and run
-python main.py
+azd auth login
+azd ai agent run                           # Run locally on http://localhost:8088
 ```
-Lots of json tracing was returned:
 ```log
-2026-11-15 12:57:22,959 INFO azure.ai.agentserver: Tracing configured successfully via microsoft-opentelemetry distro.
+Detected python project. Start command: python main.py
+Synchronizing dependencies (uv.lock)...
+  ✓ Dependencies synchronized (uv.lock)
+Starting agent on http://localhost:8088 (Ctrl+C to stop)
 ...
-2026-11-15 12:57:23,271 INFO hypercorn.error: Running on http://0.0.0.0:8088 (CTRL + C to quit)
-CTRL + C
-2026-11-15 13:05:43,312 INFO azure.ai.agentserver: AgentServerHost shutting down (graceful timeout=30s)
+[2026-11-16 13:25:57 +0100] [20488] [INFO] Running on http://0.0.0.0:8088 (CTRL + C to quit)
+Agent ready. In another terminal, try:
+
+Next:
+  azd ai agent invoke --local '<payload>'
+  send a sample request to the running agent
+
+  curl http://localhost:<port>/invocations/docs/openapi.json
+  tip: inspect the spec to learn the agent's exact payload
 ```
+A local webpage for interacting with the local agent pupped up
+![Foundry tools](./img/016-AgentLocalRun1.png)
+
+Sent it this message: "List the tools you can use.".
+It responded with [`tool_search` and `call_tool`](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview#tool-search), which are the toolbox methods.
+![Foundry tools](./img/016-AgentLocalRun3.png)
+
+
+## Agent help
 
 Lets get some help
 ```bash
@@ -305,108 +344,21 @@ azd ai agent --help
 #   Agent documentation: https://aka.ms/azd-ai-agent-docs
 ```
 
-Lets learn some more...
-```bash
-azd ai agent endpoint show
-# ERROR: no Foundry project endpoint resolved
-# Suggestion: persist a workspace default with `azd ai project set <endpoint>`, or set FOUNDRY_PROJECT_ENDPOINT in the active azd environment, or export FOUNDRY_PROJECT_ENDPOINT in your shell
+## References
+* Toolbox
+  * [Toolbox toos](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview#tool-search)
+* Agents
+  * [Configure environment variables for a hosted agent - Foundry variables](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-hosted-agent-env-variables#foundry-variables)
+  * [azure.yaml reference for hosted agents](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/azure-yaml-reference)
+  * [Run a hosted agent locally with the Azure Developer CLI](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/run-hosted-agent-locally)
+* IAM
+  * [Role-based access control for Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry?tabs=owner%2Cfoundry)
+  * [Role-based access control for Azure Language](https://learn.microsoft.com/en-us/azure/ai-services/language-service/concepts/role-based-access-control)
+  * [Azure CLI: `az cognitiveservices account project`](https://learn.microsoft.com/en-us/cli/azure/cognitiveservices/account/project?view=azure-cli-latest)
+  * [Azure CLI: `az role assignment`](https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest)
+  * [Configure keyless authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-entra-id?tabs=python&pivots=ai-foundry-portal)
+  * [MCP — Microsoft Entra (Agent Identity / Project Managed Identity)](https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/python/hosted-agents/SUPPORTED_TOOLBOX_SCENARIOS/tools/mcp-microsoft-entra.md)
 
-azd env set FOUNDRY_PROJECT_ENDPOINT https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590
-azd env set AZURE_AI_MODEL_DEPLOYMENT_NAME gpt-5-mini
-azd env set TOOLBOX_ENDPOINT https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590/toolboxes/agent-tools-016/mcp?api-version=v1
-
-azd ai agent endpoint show
-# ERROR: failed to get agent "agent-framework-agent-with-foundry-toolbox-responses": GET https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590/agents/agent-framework-agent-with-foundry-toolbox-responses
-```
-Wrong command - we checked if the agent was deployed. It is not deployed. We just want to run it locally atm.
-
-So - run the agent locally:
-```bash
-cd src\agent-framework-agent-with-foundry-toolbox-responses
-az login
-azd ai agent run                           # Run locally on http://localhost:8088
-```
-```log
-Detected python project. Start command: python main.py
-Synchronizing dependencies (uv.lock)...
-  ✓ Dependencies synchronized (uv.lock)
-Starting agent on http://localhost:8088 (Ctrl+C to stop)
-...
-[2026-11-16 13:25:57 +0100] [20488] [INFO] Running on http://0.0.0.0:8088 (CTRL + C to quit)
-Agent ready. In another terminal, try:
-
-Next:
-  azd ai agent invoke --local '<payload>'
-  send a sample request to the running agent
-
-  curl http://localhost:<port>/invocations/docs/openapi.json
-  tip: inspect the spec to learn the agent's exact payload
-```
-
-A local webpage for interacting with the local agent pupped up
-![Foundry tools](./img/016-AgentLocalRun1.png)
-
-Sent it this message: "List the tools you can use.".
-It fetched two tools and failed on 3:
-![Foundry tools](./img/016-AgentLocalRun2.png)
-
-So seemingly we have hole through to the toolbox, but are having some issues with permissions on some tools.  
-
-Well I added the instructions for adding role 'Cognitive Services Language Owner' Foundry ProjectManagedIdentity after I saw it failing here, so you can just [scroll up and see it there](#assign-the-role-in-the-azure-portal).
-
-
-
-```bash
-# in another console:
-cd src\agent-framework-agent-with-foundry-toolbox-responses
-az login
-azd ai agent invoke --local "List the tools you can use." # Test the local agent
-# azd ai agent invoke --local "Find the latest release notes for the Azure CLI on the web."
-
-# azd deploy                                 # Deploy to Foundry
-# azd ai agent invoke "your message"         # Invoke the deployed agent
-```
-```log
-Target:       localhost:8088 (local)
-Message:      "List the tools you can use."
-Session:      8c3c2dc8-4f90-4466-8914-83b762ad9c18
-Conversation: c912200a-1d50-4b06-b8a3-92577eeefad9
-
-WARNING: A new version of extension 'Foundry agents (Beta)' is available: 1.0.0-beta.19 -> 1.1.0
-  • To update: azd extension update azure.ai.agents
-  • To update all: azd extension update --all
-
-ERROR: agent failed (server_error): ('Failed to enter context manager.', McpError('tools/list failed for 1 tool source(s), succeeded for 4 tool source(s) {"errors":[{"name":"foundrymcpconn","type":"mcp","error":{"code":"HTTP_400","message":"Connection resolution failed for \'foundrymcpconn\'. HTTP status: BadRequest. Reason: Agent user impersonation is not supported with the default agent identity. Configure a provisioned agent identity by providing ApplicationName or both AgentBlueprintClientId and AgentInstanceClientId."}}]}'))
-Update available: 1.37.1 -> 1.37.3 (Release notes)
-To update, run `winget upgrade Microsoft.Azd`
-```
-Did CTRL + C to stop local agent. This asked me to update:
-```log
-WARNING: A new version of extension 'Foundry Agent Inspector (Beta)' is available: 1.0.0-beta.8 -> 1.0.0
-  • To update: azd extension update azure.ai.inspector
-  • To update all: azd extension update --all
-
-WARNING: A new version of extension 'Foundry agents (Beta)' is available: 1.0.0-beta.19 -> 1.1.0
-  • To update: azd extension update azure.ai.agents
-  • To update all: azd extension update --all
-
-Update available: 1.37.1 -> 1.37.3 (Release notes)
-To update, run `winget upgrade Microsoft.Azd`
-```
-
-```bash
-# azd ai agent invoke --local "Find the latest release notes for the Azure CLI on the web."
-
-# azd deploy                                 # Deploy to Foundry
-# azd ai agent invoke "your message"         # Invoke the deployed agent
-```
-
-### References
-* [Role-based access control for Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry?tabs=owner%2Cfoundry)
-* [Role-based access control for Azure Language](https://learn.microsoft.com/en-us/azure/ai-services/language-service/concepts/role-based-access-control)
-* [Azure CLI: `az cognitiveservices account project`](https://learn.microsoft.com/en-us/cli/azure/cognitiveservices/account/project?view=azure-cli-latest)
-* [Azure CLI: `az role assignment`](https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest)
-* [Configure keyless authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-entra-id?tabs=python&pivots=ai-foundry-portal)
-* [MCP — Microsoft Entra (Agent Identity / Project Managed Identity)](https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/python/hosted-agents/SUPPORTED_TOOLBOX_SCENARIOS/tools/mcp-microsoft-entra.md)
+## [LinkedIn Post](...)
 
 ---

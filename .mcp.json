@@ -1,0 +1,8 @@
+{
+	"mcpServers": {
+		"agent-tools-016-v3": {
+			"url": "https://soren-9590-resource.services.ai.azure.com/api/projects/soren-9590/toolboxes/agent-tools-016/versions/3/mcp?api-version=v1",
+			"type": "http"
+		}
+	}
+}
